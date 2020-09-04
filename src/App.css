@@ -36,3 +36,20 @@
     transform: rotate(360deg);
   }
 }
+.dragNode{
+  width: 100px;
+  height: 50px;
+  border: 3px solid #005bb1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+}
+#node1{
+  top: 300px;
+  left: 200px;
+}
+#node2{
+  top: 300px;
+  left: 800px;
+}

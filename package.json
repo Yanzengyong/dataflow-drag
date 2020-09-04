@@ -30,5 +30,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@antv/g6": "^3.6.2",
+    "jsplumb": "^2.14.5",
+    "react-dnd": "^7.3.2",
+    "react-dnd-html5-backend": "^7.2.0"
   }
 }
