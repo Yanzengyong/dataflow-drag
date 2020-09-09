@@ -35,6 +35,8 @@
     "@antv/g6": "^3.6.2",
     "jsplumb": "^2.14.5",
     "react-dnd": "^7.3.2",
-    "react-dnd-html5-backend": "^7.2.0"
+    "react-dnd-html5-backend": "^7.2.0",
+    "react-router-dom": "^5.2.0",
+    "ulid": "^2.3.0"
   }
 }

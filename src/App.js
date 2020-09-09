@@ -4,7 +4,7 @@
  * @Author: Yanzengyong
  * @Date: 2020-08-24 15:12:23
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-04 09:28:38
+ * @LastEditTime: 2020-09-04 22:56:20
  */
 import React from 'react';
 import G6 from '@antv/g6'
