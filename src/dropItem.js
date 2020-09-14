@@ -4,7 +4,7 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-06 21:37:06
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-09 10:45:18
+ * @LastEditTime: 2020-09-14 16:50:26
  */
 import React from 'react'
 import './newDrag.css'
@@ -30,14 +30,19 @@ class DropItem extends React.Component {
 		const x = position && position.x ? position.x : 0
 
 		return (
-      <div onClick={
-        () => dropItemClickHandle(dropId, dragInfo)
-      } className='dropItem' id={dropId} style={{ position: "absolute", top: y, left: x }}>
+      <div 
+        onClick={
+          () => dropItemClickHandle(dropId, dragInfo)
+        } 
+        className='dropItem' 
+        id={dropId} 
+        style={{ position: "absolute", top: y, left: x }}
+      >
         <div className="dropItem_container">
           <div className="dropItem_status">
             {status ?? '正'}
           </div>
-          <div className="dropItem_title">{title}</div>
+          <div className="dropItem_title" title={title} >{title}</div>
           <div className="dropItem_tool">
             <div onClick={
               (e) => {

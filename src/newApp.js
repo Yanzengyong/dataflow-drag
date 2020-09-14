@@ -4,7 +4,7 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-02 10:11:15
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-14 10:21:25
+ * @LastEditTime: 2020-09-14 17:35:23
  */
 import React from 'react'
 import { DragGroup, ConsumerDragItem } from './drag'
@@ -41,7 +41,7 @@ class NewApp extends React.Component {
   moveEnd = true
 
   // jsplumb配置
-  common = {
+  CreateInstanceConfig = {
     isSource: true,
     isTarget: true,
     connector: 'Flowchart',
@@ -72,9 +72,59 @@ class NewApp extends React.Component {
       ["Custom", {
         create: () => {
           const ElementDiv = document.createElement("div")
-          console.log(ElementDiv)
+
           ElementDiv.classList.add('connectDelete')
           ElementDiv.innerText = 'X'
+          
+          return ElementDiv
+        },
+        location: 0.5,
+        id: "custom-delete",
+        events:{
+          click: (labelOverlay, originalEvent) => { 
+            this.deleteConnectHandle(labelOverlay)
+          }
+        }
+      }],
+    ]
+  }
+
+  // 初始化创建连接时的配置
+  ConnectorConfig = {
+    isSource: true,
+    isTarget: true,
+    connector: 'Flowchart',
+    endpoint: 'Dot',
+    endpointStyle: {
+      stroke: 'yellowgreen', 
+      strokeWidth: 1,
+      fill: '#fff',
+      radius: 4, // 蓝色圆点调试大小
+    },
+    endpointHoverStyle: { 
+      fill: 'yellowgreen', 
+    },
+    paintStyle: {
+      stroke: '#49b4f3',
+      strokeWidth: 2,
+    },
+    hoverPaintStyle: { 
+      stroke: '#f3992a',
+      strokeWidth: 4,
+    },
+    overlays: [
+      ['Arrow', {
+        width: 10,
+        length: 10,
+        location: 1
+      }],
+      ["Custom", {
+        create: () => {
+          const ElementDiv = document.createElement("div")
+
+          ElementDiv.classList.add('connectDelete')
+          ElementDiv.innerText = 'X'
+          
           return ElementDiv
         },
         location: 0.5,
@@ -92,6 +142,7 @@ class NewApp extends React.Component {
     this.JsPlumbInitHandle()
     this.setDropBoxRange()
     this.hoverOverlayHandle()
+
   }
 
   // hover效果功能
@@ -147,6 +198,7 @@ class NewApp extends React.Component {
     })
     // 设置拖拽容器
     this.JsPlumbInstance.setContainer('drag_box')
+    
     // 监听链接事件
     this.JsPlumbInstance.bind('connection', (conn) => {
       const sourcePosition_x = conn.source.offsetLeft
@@ -169,6 +221,7 @@ class NewApp extends React.Component {
         return
       }
       const { connectionList } = this.state
+
       const isHave = connectionList.findIndex((item) => item.sourceId === sourceId && item.targetId === targetId)
       if (isHave !== -1) {
         this.JsPlumbInstance.deleteConnection(conn.connection)
@@ -197,7 +250,8 @@ class NewApp extends React.Component {
         }
       }, () => {
         console.log('新增了一个连接，最新数组为', conn.connection.id, this.state.connectionList)
-        window.sessionStorage.setItem('flowConnectionLsit', JSON.stringify(this.state.connectionList))
+        // 存储关联
+        this.saveStateConnectionList()
       })
 
     })
@@ -211,6 +265,8 @@ class NewApp extends React.Component {
         connectionList: afterDeleteConnectionList
       }, () => {
         console.log('连接断开了，最新数组为：', this.state.connectionList)
+        // 存储关联
+        this.saveStateConnectionList()
       })
     })
     
@@ -233,19 +289,28 @@ class NewApp extends React.Component {
     // 判断是否存在数据，如果已经存在数据就渲染已经存在的数据
     const localNodeList = window.sessionStorage.getItem('flowNodeList') ? JSON.parse(window.sessionStorage.getItem('flowNodeList')) : [] 
     const flowConnectionLsit = window.sessionStorage.getItem('flowConnectionLsit') ? JSON.parse(window.sessionStorage.getItem('flowConnectionLsit')) : []
+    
     if (localNodeList.length > 0) {
-      console.log('??????')
+
       this.setState({
         nodeList: localNodeList
       }, () => {
         if (flowConnectionLsit.length > 0) {
+          
           flowConnectionLsit.forEach((item) => {
-            // this.JsPlumbInstance.connect({
-            //   source: item.sourceId, 
-            //   target: item.targetId,
-            //   anchors: item.anchor,
-            // })
+            const connection = this.JsPlumbInstance.connect({
+              source: item.sourceId, 
+              target: item.targetId,
+              anchors: item.anchor,
+            }, this.ConnectorConfig)
+
+            const overlay = connection.getOverlay("custom-delete")
+
+            overlay.hide()
+
           })
+
+
         }
       })
 
@@ -261,8 +326,9 @@ class NewApp extends React.Component {
         nodeList: [...prevState.nodeList, node]
       }
     }, () => {
+      console.log('我是最新的nodeList', this.state.nodeList)
       // 进行存储
-      window.sessionStorage.setItem('flowNodeList', JSON.stringify(this.state.nodeList))
+      this.saveStateNodeList()
     })
   }
 
@@ -325,7 +391,8 @@ class NewApp extends React.Component {
       nodeList: afterDeleteNodeList
     }, () => {
       this.JsPlumbInstance.remove(dropId)
-      window.sessionStorage.setItem('flowNodeList', JSON.stringify(this.state.nodeList))
+      // 进行存储
+      this.saveStateNodeList()
     })
   }
 
@@ -345,6 +412,43 @@ class NewApp extends React.Component {
         hasOverlay = false
       })
     }
+  }
+
+  // 节点在容器中的change事件
+  onNodeDragChange = (record) => {
+
+    const { nodeList } = this.state
+    const setPositionNodeList = nodeList.map((item) => {
+      if (item.dropId === record.dropId) {
+        return {
+          ...item,
+          position: {
+            x: record.finalPos[0],
+            y: record.finalPos[1]
+          }
+        }
+      } else {
+        return item
+      }
+    })
+
+    this.setState({
+      nodeList: setPositionNodeList
+    }, () => {
+      // 进行存储
+      this.saveStateNodeList()
+    })
+  }
+
+  // 会话存储nodelist
+  saveStateNodeList = () => {
+    // 进行存储
+    window.sessionStorage.setItem('flowNodeList', JSON.stringify(this.state.nodeList))
+  }
+
+  // 会话存储connectionlist
+  saveStateConnectionList = () => {
+    window.sessionStorage.setItem('flowConnectionLsit', JSON.stringify(this.state.connectionList))
   }
   
   render() {
@@ -368,7 +472,7 @@ class NewApp extends React.Component {
         onSettingHandle: this.onSettingHandle,
         dropItemClickHandle: this.dropItemClickHandle,
         deleteDropItemHandle: this.deleteDropItemHandle,
-        // deleteConnectHandle: this.deleteConnectHandle
+        onNodeDragChange: this.onNodeDragChange
       }}>
         <div className='drag_container'>
           <div className='drag_sidebar'>
@@ -396,7 +500,7 @@ class NewApp extends React.Component {
 
             <DropBoxBox 
               JsPlumbInstance={this.JsPlumbInstance}
-              config={this.common}
+              config={this.CreateInstanceConfig}
               id='dropBox-box'
               range={dropBoxBoxRange} 
               type='box' 
@@ -404,7 +508,7 @@ class NewApp extends React.Component {
             />
             <DropBoxYzy 
               JsPlumbInstance={this.JsPlumbInstance}
-              config={this.common}
+              config={this.CreateInstanceConfig}
               id='dropBox-yzy' 
               range={dropBoxYzyRange} 
               type='yzy' 

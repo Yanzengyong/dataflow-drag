@@ -4,7 +4,7 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-01 16:51:42
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-14 10:20:45
+ * @LastEditTime: 2020-09-14 17:35:48
  */
 import React from 'react'
 import { DropTarget } from 'react-dnd'
@@ -77,22 +77,24 @@ class DefaultDropContainer extends React.Component{
   }
   
   componentDidMount() {
-    console.log(this.props)
+
   }
   
   componentDidUpdate(prevProps, PrevState) {
     const { boxList } = this.state
 
 		if (boxList.length > 0) {
-			const newNode = boxList.find((item) => {
+			const newNode = boxList.filter((item) => {
 				if (PrevState.boxList.length === 0 || !PrevState.boxList.some((ite) => ite.dropId === item.dropId)) {
 					return item
 				}
       })
       console.log('newNode===', newNode)
 
-			if (newNode) {
-        this.createJsplumbNode(newNode)
+			if (newNode && newNode.length > 0) {
+        newNode.forEach((item) => {
+          this.createJsplumbNode(item)
+        })
 			}
 		}
 
@@ -100,7 +102,7 @@ class DefaultDropContainer extends React.Component{
   
   // 创建jsplumb节点
   createJsplumbNode = (node) => {
-    console.log(node)
+
     const { JsPlumbInstance, id, config } = this.props
     // 创建节点
     JsPlumbInstance.addEndpoint(node.dropId, {
@@ -118,7 +120,15 @@ class DefaultDropContainer extends React.Component{
 
     // 移动固定在该盒子区域
     JsPlumbInstance.draggable(node.dropId, {
-      containment: id
+      containment: id,
+      grid: [10, 10],
+      stop: (e) => { // 监听移动
+        const { onNodeDragChange } = this.props
+        onNodeDragChange({
+          ...e,
+          dropId: node.dropId
+        })
+      }
     })
   }
 
