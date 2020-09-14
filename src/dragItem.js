@@ -4,10 +4,10 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-04 22:55:05
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-08 11:33:21
+ * @LastEditTime: 2020-09-14 17:42:27
  */
 import React from 'react'
-import './drag.css'
+import './newDrag.css'
 
 class DragItem extends React.Component {
   render() {

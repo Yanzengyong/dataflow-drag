@@ -4,19 +4,17 @@
  * @Author: Yanzengyong
  * @Date: 2020-08-24 15:12:23
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-04 10:46:37
+ * @LastEditTime: 2020-09-14 17:45:33
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import NewApp from './newApp'
 
 ReactDOM.render(
   <React.StrictMode>
-    <NewApp />
-    {/* <App /> */}
+    <App />
   </React.StrictMode>,
   document.getElementById('root')
 );

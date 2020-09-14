@@ -28,6 +28,9 @@
   border: 1px solid #ccc;
   background-color: teal;
   color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .drag_box{
   width: calc(100% - 260px);
