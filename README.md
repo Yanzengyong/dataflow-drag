@@ -4,7 +4,7 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-04 22:55:05
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-14 18:01:53
+ * @LastEditTime: 2020-09-14 18:46:41
 -->
 # 一个基于jsplumb和react-dnd实现的拖拽例子
 
@@ -20,4 +20,4 @@
 
 ## 截图
 
-![avatar](./public/example.png)
+![avatar](https://raw.githubusercontent.com/Yanzengyong/dataflow-drag/master/public/example.png)
