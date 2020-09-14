@@ -4,7 +4,7 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-02 10:11:15
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-09 22:36:03
+ * @LastEditTime: 2020-09-14 10:21:25
  */
 import React from 'react'
 import { DragGroup, ConsumerDragItem } from './drag'
@@ -36,6 +36,62 @@ class NewApp extends React.Component {
     currentStatusDropItem: {},
     connectionList: [],
     nodeList: []
+  }
+
+  moveEnd = true
+
+  // jsplumb配置
+  common = {
+    isSource: true,
+    isTarget: true,
+    connector: 'Flowchart',
+    endpoint: 'Dot',
+    paintStyle: {
+      stroke: 'yellowgreen', 
+      strokeWidth: 1,
+      fill: '#fff',
+      radius: 4, // 蓝色圆点调试大小
+    },
+    hoverPaintStyle: { 
+      fill: 'yellowgreen'
+    },
+    connectorStyle: {
+      stroke: '#49b4f3',
+      strokeWidth: 2,
+    },
+    connectorHoverStyle: {
+      stroke: '#f3992a',
+      strokeWidth: 4,
+    },
+    connectorOverlays: [
+      ['Arrow', {
+        width: 10,
+        length: 10,
+        location: 1
+      }],
+      ["Custom", {
+        create: () => {
+          const ElementDiv = document.createElement("div")
+          console.log(ElementDiv)
+          ElementDiv.classList.add('connectDelete')
+          ElementDiv.innerText = 'X'
+          return ElementDiv
+        },
+        location: 0.5,
+        id: "custom-delete",
+        events:{
+          click: (labelOverlay, originalEvent) => { 
+            this.deleteConnectHandle(labelOverlay)
+          }
+        }
+      }],
+    ]
+  }
+
+  componentDidMount() {
+    this.JsPlumbInitHandle()
+    this.setDropBoxRange()
+    this.hoverOverlayHandle()
   }
 
   // hover效果功能
@@ -82,26 +138,119 @@ class NewApp extends React.Component {
     })
   }
 
-  componentDidMount() {
+  // 初始化jsplumb
+  JsPlumbInitHandle = () => {
+    // 初始化一个实例
     this.JsPlumbInstance = jsPlumb.getInstance()
-    this.JsPlumbInstance.setContainer('drag_box')
     this.JsPlumbInstance.importDefaults({
-
+      MaxConnections: -1
     })
+    // 设置拖拽容器
+    this.JsPlumbInstance.setContainer('drag_box')
+    // 监听链接事件
     this.JsPlumbInstance.bind('connection', (conn) => {
+      const sourcePosition_x = conn.source.offsetLeft
+      const sourcePosition_y = conn.source.offsetTop
+      const targetPosition_x = conn.target.offsetLeft
+      const targetPosition_y = conn.target.offsetTop
+      const connectionId = conn.connection.id
+      if (!this.moveEnd) {
+        return
+      }
+      /**
+       * 需要判断连接是否存在、是否连接的是自己
+       * 如果存在连接就删除重复
+       * 如果连接是自己则删除这次连接
+       */
+      const sourceId = conn.sourceId
+      const targetId = conn.targetId
+      if (sourceId === targetId) {
+        this.JsPlumbInstance.deleteConnection(conn.connection)
+        return
+      }
+      const { connectionList } = this.state
+      const isHave = connectionList.findIndex((item) => item.sourceId === sourceId && item.targetId === targetId)
+      if (isHave !== -1) {
+        this.JsPlumbInstance.deleteConnection(conn.connection)
+        return
+      }
+
       this.setState((prevState) => {
         return {
-          connectionList: [...prevState.connectionList, conn]
+          connectionList: [...prevState.connectionList, {
+            sourceId: conn.sourceId,
+            targetId: conn.targetId,
+            sourcePosition: {
+              x: sourcePosition_x,
+              y: sourcePosition_y
+            },
+            targetPosition: {
+              x: targetPosition_x,
+              y: targetPosition_y
+            },
+            connectionId: connectionId,
+            anchor: [
+              conn.sourceEndpoint.anchor.type,
+              conn.targetEndpoint.anchor.type,
+            ]
+          }]
         }
       }, () => {
-        console.log('新增了一个连接', conn)
-        
+        console.log('新增了一个连接，最新数组为', conn.connection.id, this.state.connectionList)
+        window.sessionStorage.setItem('flowConnectionLsit', JSON.stringify(this.state.connectionList))
       })
 
     })
+    // 监听链接断开事件
+    this.JsPlumbInstance.bind('connectionDetached', (conn) => {
 
-    this.setDropBoxRange()
-    this.hoverOverlayHandle()
+      const { connectionList } = this.state
+      const connectionId = conn.connection.id
+      const afterDeleteConnectionList = connectionList.filter((item) => item.connectionId !== connectionId)
+      this.setState({
+        connectionList: afterDeleteConnectionList
+      }, () => {
+        console.log('连接断开了，最新数组为：', this.state.connectionList)
+      })
+    })
+    
+    // 监听移动事件
+    this.JsPlumbInstance.bind('connectionMoved', (conn) => {
+   
+      const { connectionList } = this.state
+      const connectionId = conn.connection.id
+      const afterDeleteConnectionList = connectionList.filter((item) => item.connectionId !== connectionId)
+      this.moveEnd = false
+      this.setState({
+        connectionList: afterDeleteConnectionList
+      }, () => {
+        console.log('我移动了连接，移动后', conn.connection.id, this.state.connectionList)
+        this.moveEnd = true
+      })
+    })
+    
+
+    // 判断是否存在数据，如果已经存在数据就渲染已经存在的数据
+    const localNodeList = window.sessionStorage.getItem('flowNodeList') ? JSON.parse(window.sessionStorage.getItem('flowNodeList')) : [] 
+    const flowConnectionLsit = window.sessionStorage.getItem('flowConnectionLsit') ? JSON.parse(window.sessionStorage.getItem('flowConnectionLsit')) : []
+    if (localNodeList.length > 0) {
+      console.log('??????')
+      this.setState({
+        nodeList: localNodeList
+      }, () => {
+        if (flowConnectionLsit.length > 0) {
+          flowConnectionLsit.forEach((item) => {
+            // this.JsPlumbInstance.connect({
+            //   source: item.sourceId, 
+            //   target: item.targetId,
+            //   anchors: item.anchor,
+            // })
+          })
+        }
+      })
+
+    }
+
 
   }
 
@@ -111,40 +260,52 @@ class NewApp extends React.Component {
         lastDropNode: node,
         nodeList: [...prevState.nodeList, node]
       }
+    }, () => {
+      // 进行存储
+      window.sessionStorage.setItem('flowNodeList', JSON.stringify(this.state.nodeList))
     })
   }
 
+  // 处理状态
+  reviseStatusHandle = (statusDropId, status) => {
+    const {
+      nodeList
+    } = this.state
+    // 当前需要修改状态的dropItem
+    const currentStatusDropItem = nodeList.find((item) => item.dropId === statusDropId)
 
+    // 重新设置nodelist和修改了状态的dropItem
+    this.setState({
+      nodeList: nodeList.map((item) => {
+        if (item.dropId === statusDropId) {
+          return {
+            ...item,
+            status
+          }
+        } else {
+          return item
+        }
+      }),
+      currentStatusDropItem: {
+        ...currentStatusDropItem,
+        status
+      }
+    })
+
+  }
+
+  // 单个dropItem执行函数
   onExecuteHandle = (dropId, dragInfo) => {
     console.log('我点击了执行按钮', dropId, dragInfo)
-    const { nodeList } = this.state
-    const currentStatusDropItem = nodeList.find((item) => item.dropId === dropId)
     
     setTimeout(() => {
-      this.setState({
-        currentStatusDropItem: {
-          ...currentStatusDropItem,
-          status: 'loading'
-        }
-      })
+      this.reviseStatusHandle(dropId, 'loading')
     }, 3000)
     setTimeout(() => {
-      this.setState({
-        currentDropItem: {
-          status: 'success',
-          dropId: dropId,
-          dragInfo: dragInfo
-        }
-      })
+      this.reviseStatusHandle(dropId, 'success')
     }, 6000)
     setTimeout(() => {
-      this.setState({
-        currentDropItem: {
-          status: 'error',
-          dropId: dropId,
-          dragInfo: dragInfo
-        }
-      })
+      this.reviseStatusHandle(dropId, 'error')
     }, 9000)
   }
 
@@ -158,19 +319,27 @@ class NewApp extends React.Component {
 
   deleteDropItemHandle = (dropId, dragInfo) => {
     console.log('我被删除了', dropId, dragInfo)
-    this.JsPlumbInstance.remove(dropId)
+    const { nodeList } = this.state
+    const afterDeleteNodeList = nodeList.filter((item) => item.dropId !== dropId)
+    this.setState({
+      nodeList: afterDeleteNodeList
+    }, () => {
+      this.JsPlumbInstance.remove(dropId)
+      window.sessionStorage.setItem('flowNodeList', JSON.stringify(this.state.nodeList))
+    })
   }
 
   deleteConnectHandle = (overlay) => {
     let hasOverlay = !!overlay
     if (hasOverlay) {
-      this.JsPlumbInstance.bind('click', function (conn, originalEvent) {
+      this.JsPlumbInstance.bind('click', (conn, originalEvent) => {
 
         if (!hasOverlay) {
           return
         }
+
         if (window.prompt('确定删除所点击的连接吗？ 输入1确定') === '1') {
-          this.deleteConnection(conn)
+          this.JsPlumbInstance.deleteConnection(conn)
         }
         
         hasOverlay = false
@@ -199,7 +368,7 @@ class NewApp extends React.Component {
         onSettingHandle: this.onSettingHandle,
         dropItemClickHandle: this.dropItemClickHandle,
         deleteDropItemHandle: this.deleteDropItemHandle,
-        deleteConnectHandle: this.deleteConnectHandle
+        // deleteConnectHandle: this.deleteConnectHandle
       }}>
         <div className='drag_container'>
           <div className='drag_sidebar'>
@@ -227,6 +396,7 @@ class NewApp extends React.Component {
 
             <DropBoxBox 
               JsPlumbInstance={this.JsPlumbInstance}
+              config={this.common}
               id='dropBox-box'
               range={dropBoxBoxRange} 
               type='box' 
@@ -234,6 +404,7 @@ class NewApp extends React.Component {
             />
             <DropBoxYzy 
               JsPlumbInstance={this.JsPlumbInstance}
+              config={this.common}
               id='dropBox-yzy' 
               range={dropBoxYzyRange} 
               type='yzy' 
