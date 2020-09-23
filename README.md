@@ -18,6 +18,10 @@
 - [x] 不可连接自己
 - [x] 记住节点及关系
 
+## 预览
+
+[预览地址](http://167.179.81.55/dragflow)
+
 ## 截图
 
 ![avatar](https://raw.githubusercontent.com/Yanzengyong/dataflow-drag/master/public/example.png)
