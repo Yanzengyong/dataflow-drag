@@ -4,12 +4,24 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-06 21:37:06
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-14 16:50:26
+ * @LastEditTime: 2020-09-28 14:35:06
  */
 import React from 'react'
 import './newDrag.css'
 
 class DropItem extends React.Component {
+
+  renderStatus = (status) => {
+    const {
+      statusReactNode
+    } = this.props
+    const StatusNodeType = typeof statusReactNode
+    if (statusReactNode && StatusNodeType === 'function') {
+      return statusReactNode(status)
+    } else {
+      return ''
+    }
+  }
 
 	render() {
 		const { 
@@ -28,7 +40,7 @@ class DropItem extends React.Component {
 
 		const y = position && position.y ? position.y : 0
 		const x = position && position.x ? position.x : 0
-
+    console.log(this.props)
 		return (
       <div 
         onClick={
@@ -40,7 +52,7 @@ class DropItem extends React.Component {
       >
         <div className="dropItem_container">
           <div className="dropItem_status">
-            {status ?? '正'}
+            {this.renderStatus(status)}
           </div>
           <div className="dropItem_title" title={title} >{title}</div>
           <div className="dropItem_tool">

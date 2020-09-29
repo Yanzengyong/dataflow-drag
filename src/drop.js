@@ -4,14 +4,35 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-01 16:51:42
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-14 17:35:48
+ * @LastEditTime: 2020-09-29 14:47:16
  */
 import React from 'react'
 import { DropTarget } from 'react-dnd'
 import './newDrag.css'
-import DropItem from './dropItem'
 import ConsumerRegister from './ConsumerRegister'
 
+
+const dropItemDecorator = (Comp) => {
+  return (props) => {
+    const { 
+			position,
+			dropId,
+    } = props
+
+		const y = position && position.y ? position.y : 0
+    const x = position && position.x ? position.x : 0
+    
+    return (
+      <div 
+        key={dropId}
+        id={dropId} 
+        style={{ position: "absolute", top: y, left: x }}
+      >
+        <Comp {...props} />
+      </div>
+		)
+  }
+}
 
 class DefaultDropContainer extends React.Component{
 
@@ -89,7 +110,7 @@ class DefaultDropContainer extends React.Component{
 					return item
 				}
       })
-      console.log('newNode===', newNode)
+      // console.log('newNode===', newNode)
 
 			if (newNode && newNode.length > 0) {
         newNode.forEach((item) => {
@@ -103,25 +124,33 @@ class DefaultDropContainer extends React.Component{
   // 创建jsplumb节点
   createJsplumbNode = (node) => {
 
-    const { JsPlumbInstance, id, config } = this.props
+    const { JsPlumbInstance, id } = this.props
     // 创建节点
     JsPlumbInstance.addEndpoint(node.dropId, {
-      anchors: 'Top'
-    }, config)
+      anchors: 'Top',
+      isSource: true,
+      isTarget: true,
+    })
     JsPlumbInstance.addEndpoint(node.dropId, {
-      anchor: 'Right'
-    }, config)
+      anchor: 'Right',
+      isSource: true,
+      isTarget: true,
+    })
     JsPlumbInstance.addEndpoint(node.dropId, {
-      anchor: 'Bottom'
-    }, config)
+      anchor: 'Bottom',
+      isSource: true,
+      isTarget: true,
+    })
     JsPlumbInstance.addEndpoint(node.dropId, {
-      anchor: 'Left'
-    }, config)
+      anchor: 'Left',
+      isSource: true,
+      isTarget: true,
+    })
 
     // 移动固定在该盒子区域
     JsPlumbInstance.draggable(node.dropId, {
       containment: id,
-      grid: [10, 10],
+      grid: [1, 1],
       stop: (e) => { // 监听移动
         const { onNodeDragChange } = this.props
         onNodeDragChange({
@@ -134,17 +163,21 @@ class DefaultDropContainer extends React.Component{
 
   render() {
 
-    const { id, title, canDrop, isOver, connectDropTarget } = this.props
-		const isActive = canDrop && isOver
-    const { boxList } = this.state
+    const { id, title, dropBoxClassName, connectDropTarget, DropItemNode } = this.props
 
+    const { boxList } = this.state
+    
+    console.log(boxList, this.props)
 		return connectDropTarget && connectDropTarget(
-			<div className='dropBox_container_new'>
-				<div className='dropBox_new' id={id} style={isActive ? {backgroundColor: '#ccc'} : null}>
-					{isActive ? '可以放置' : title}
+			<div className={dropBoxClassName ? dropBoxClassName : 'dropBox_container_new'} >
+				<div className='dropBox_new' id={id} >
+          <div className='dropBoxTitle'>{title}</div>
           {
             boxList.map((item) => (
-              <DropItem key={item.dropId} {...item} {...this.props}/>
+              dropItemDecorator(DropItemNode)({
+                ...this.props,
+                 ...item
+              })
             ))
           }
 				</div>
@@ -153,7 +186,7 @@ class DefaultDropContainer extends React.Component{
   }
 }
 
-const DropBoxFn = (type) => {
+const DropBoxFn = (type, DropItemFn) => {
 
   return ConsumerRegister(
     DropTarget(
@@ -161,6 +194,7 @@ const DropBoxFn = (type) => {
       {
         // 当有对应的 drag source 放在当前组件区域时，会返回一个对象，可以在 monitor.getDropResult() 中获取到
         drop: (props, monitor, component) => {
+          console.log('我是放下时候的props', monitor.getItem())
           const { range } = props
           const { minX, minY } = range ?? {}
           const getSourceClientOffset = monitor.getSourceClientOffset()
@@ -170,13 +204,14 @@ const DropBoxFn = (type) => {
             x: getSourceClientOffset.x - minX,
             y: getSourceClientOffset.y - minY,
           }
-   
+          const DefaultStatus = ItemInfo.info ? ItemInfo.info.status ?? '' : ''
           return {
             dropType: props.type,
             position: position,
             dragType: ItemInfo.type,
             dropId: ItemInfo.dropId,
-            dragInfo: ItemInfo.info
+            dragInfo: ItemInfo.info,
+            status: DefaultStatus
           }
         },
         canDrop: (props, monitor, component) => {
@@ -207,7 +242,8 @@ const DropBoxFn = (type) => {
           canDrop: monitor.canDrop()
         }
       }
-    )(DefaultDropContainer)
+    )(DefaultDropContainer),
+    DropItemFn
   )
 }
 

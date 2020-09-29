@@ -16,21 +16,25 @@
 .drag_sidebar_item{
   list-style: none;
   width: 100%;
-  padding: 0 10px;
+  padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
 
 .componentItem{
   width: 100%;
-  height: 45px;
+  height: 40px;
   border-radius: 10px;
-  border: 1px solid #ccc;
+  box-sizing: border-box;
   background-color: teal;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 6px;
+  font-weight: 500;
+  text-shadow: 1px 1px 2px #242424;
+  font-size: 14px;
 }
 .drag_box{
   width: calc(100% - 260px);
@@ -47,31 +51,29 @@
 .dropBox_new{
   width: 100%;
   height: 100%;
-  border: 1px dotted #333;
   position: relative;
 }
-.dropItem {
-  width: 160px;
-  height: 40px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  background-color: teal;
-  color: #fff;
-  font-size: 12px;
-  padding: 2px 10px;
-  cursor: pointer;
-}
-.dropItem:hover .dropItem_close{
-  display: block;
-}
+
+
 .dropItem_container{
-  width: 100%;
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-sizing: border-box;
   position: relative;
+  width: 160px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid rgb(17, 83, 182);
+  background-color: rgb(233, 173, 94);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  text-shadow: 1px 1px 2px #242424;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.dropItem_container:hover .dropItem_close{
+  display: block;
 }
 .dropItem_status{
   width: 18px;
@@ -112,7 +114,7 @@
   display: none;
   position: absolute;
   top: -10px;
-  right: -15px;
+  right: -10px;
 }
 .dropItem_close img{
   width: 18px;
@@ -129,4 +131,14 @@
   font-size: 12px;
   color: #fff;
   cursor: pointer;
+}
+.dropBoxTitle{
+  font-size: 15px;
+  font-weight: 600;
+  color: #047a96;
+  text-shadow: 1px 1px 2px #fff;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 30px;
 }

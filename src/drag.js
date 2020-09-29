@@ -4,7 +4,7 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-04 14:30:40
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-09 20:17:33
+ * @LastEditTime: 2020-09-29 16:01:23
  */
 import React from 'react'
 import { ulid } from 'ulid'
@@ -27,7 +27,7 @@ const DragGroup = ({ children, title }) => {
 }
 
 
-const DragItemFn = (name, dragInfo) => {
+const DragItemFn = (name) => {
   return DragSource(name, {
     beginDrag(props, monitor, component) { // 当拖动开始时的回调
       const { id } = props.info
@@ -42,7 +42,8 @@ const DragItemFn = (name, dragInfo) => {
       console.log('我是拖拽开始以后到拖拽结束的')
       // 拖拽元素放下时，drop 结果
       // 注意：该钩子函数是整个动作最后执行的，monitor.getDropResult()拿到的是在droptarget中drop钩子返回的对象
-      const dropResult = monitor.getDropResult();
+      const dropResult = monitor.getDropResult()
+      console.log(dropResult)
       if (dropResult) { // 如果存在dropResult，说明执行了drop函数
         // 在这里应该像droptarget中创建结果div
         props.addItemToDropBox(dropResult)
@@ -60,7 +61,8 @@ const DragItemFn = (name, dragInfo) => {
   })
 }
 
-const DragItem = (props) => {
+//
+const DragItemOld = (props) => {
   const {type, info} = props
 
   const DragItem = DragItemFn(type, info)(ComponentItem)
@@ -69,7 +71,30 @@ const DragItem = (props) => {
   )
 }
 
-const ConsumerDragItem = ConsumerRegister(DragItem)
+const ConsumerDragItem = ConsumerRegister(DragItemOld)
+//
+
+const DragItem = (props) => {
+  const {
+    dragItemNode: DragItemNode,
+    type,
+    info
+  } = props
+  const ConsumerDragItem = ConsumerRegister(DragItemFn(type, info)(
+    class extends React.Component {
+      render() {
+        const { connectDragSource } = this.props
+    
+        return connectDragSource && connectDragSource(
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <DragItemNode {...this.props} />
+          </div>
+        )
+      }
+    }
+  ))
+  return <ConsumerDragItem {...props} />
+}
 
 export {
   DragGroup,

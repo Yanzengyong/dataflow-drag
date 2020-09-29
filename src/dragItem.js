@@ -4,17 +4,17 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-04 22:55:05
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-14 17:42:27
+ * @LastEditTime: 2020-09-29 15:19:15
  */
 import React from 'react'
 import './newDrag.css'
 
 class DragItem extends React.Component {
   render() {
-    const { info, connectDragSource } = this.props
+    const { info } = this.props
     const { title } = info
 
-    return connectDragSource && connectDragSource(
+    return (
       <li className='componentItem'>
         {title || '我没有获取到title值'}
       </li>
