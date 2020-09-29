@@ -4,11 +4,11 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-01 16:51:42
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-29 17:18:50
+ * @LastEditTime: 2020-09-29 17:30:32
  */
 import React from 'react'
 import { DropTarget } from 'react-dnd'
-import './newDrag.css'
+import './index.css'
 import ConsumerRegister from './ConsumerRegister'
 
 

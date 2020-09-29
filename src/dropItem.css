@@ -1,0 +1,81 @@
+.dropItem_container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 160px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid rgb(17, 83, 182);
+  background-color: rgb(233, 173, 94);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  text-shadow: 1px 1px 2px #242424;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.dropItem_container:hover .dropItem_close{
+  display: block;
+}
+.dropItem_close{
+  display: none;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+}
+.dropItem_close img{
+  width: 18px;
+  height: 18px;
+}
+.dropItem_status{
+  width: 18px;
+  height: 18px;
+}
+.dropItem_title{
+  width: 80px;
+  margin: 0 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.dropItem_tool{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+.default_icon{
+  fill: #29b9f1;
+}
+.warning_icon{
+  fill: #eb4a3f;
+}
+.loading_icon{
+  fill: #ececec;
+  animation: LoadingAnimate 1s linear infinite ;
+}
+.success_icon{
+  fill: #43c728;
+}
+.setting_icon{
+  fill: #1859e6;
+  width: 16px!important;
+  height: 16px!important;
+}
+.execute_icon{
+  fill: #1859e6;
+  width: 16px!important;
+  height: 16px!important;
+}
+
+
+@keyframes LoadingAnimate
+{
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

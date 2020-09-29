@@ -4,11 +4,11 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-02 10:11:15
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-29 17:23:42
+ * @LastEditTime: 2020-09-29 17:37:54
  */
 import React from 'react'
 import { Provider } from './contextType'
-import './newDrag.css'
+import './index.css'
 import { DragDropContext } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { jsPlumb } from 'jsplumb'
@@ -156,6 +156,7 @@ class FlowContainerClass extends React.Component {
       })
 
     })
+    
     // 监听链接断开事件
     this.JsPlumbInstance.bind('connectionDetached', (conn) => {
 

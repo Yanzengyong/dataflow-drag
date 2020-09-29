@@ -4,26 +4,30 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-24 10:24:26
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-29 16:28:11
+ * @LastEditTime: 2020-09-29 17:34:01
  */
 import React from 'react'
 import {
   FlowContainer,
   NodeList,
   DropBox
-} from './flowIndex'
-import { DropBoxFn } from './drop'
-import { DragGroup, DragItem } from './drag'
-import './test.css'
-
-import DropItem from './dropItemTest'
+} from './DragFlow'
+import { DropBoxFn } from './DragFlow/drop'
+import { DragGroup, DragItem } from './DragFlow/drag'
+import DropItem from './dropItem'
 import ComponentItem from './dragItem'
+import './app.css'
 
+/**
+ * DropBoxFn(type, Component)
+ * @param type 放置区域的type
+ * @param Component 放置区域的自定义节点
+ */
 const DropItemBox = DropBoxFn('A', DropItem)
 const DropItemYzy = DropBoxFn('B', DropItem)
 
 
-class Test extends React.Component {
+class FlowExample extends React.Component {
   flowRef = React.createRef();
   state = {
     dropBoxBoxRange: {},
@@ -123,7 +127,7 @@ class Test extends React.Component {
         maxY: dropBoxBoxY
       },
       dropBoxYzyRange: {
-        minX: 260 + dropBoxBoxX,
+        minX: 200 + dropBoxBoxX,
         maxX: dropBoxBoxX + dropYzyBoxX + 200 - 160,
         minY: 0,
         maxY: dropYzyBoxY
@@ -225,4 +229,4 @@ class Test extends React.Component {
   }
 }
 
-export default Test
+export default FlowExample
