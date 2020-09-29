@@ -4,7 +4,7 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-01 16:51:42
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-29 17:30:32
+ * @LastEditTime: 2020-09-29 17:57:27
  */
 import React from 'react'
 import { DropTarget } from 'react-dnd'
@@ -106,11 +106,9 @@ class DefaultDropContainer extends React.Component{
 
 		if (boxList.length > 0) {
 			const newNode = boxList.filter((item) => {
-				if (PrevState.boxList.length === 0 || !PrevState.boxList.some((ite) => ite.dropId === item.dropId)) {
-					return item
-				}
+        return PrevState.boxList.length === 0 || !PrevState.boxList.some((ite) => ite.dropId === item.dropId)
       })
-      // console.log('newNode===', newNode)
+      console.log('newNode===', newNode)
 
 			if (newNode && newNode.length > 0) {
         newNode.forEach((item) => {
@@ -248,5 +246,5 @@ const DropBoxFn = (type, DropItemFn) => {
 }
 
 export {
-  DropBoxFn,
+  DropBoxFn
 }

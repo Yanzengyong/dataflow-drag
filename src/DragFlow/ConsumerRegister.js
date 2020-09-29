@@ -4,10 +4,10 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-04 14:47:16
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-29 17:28:24
+ * @LastEditTime: 2020-09-29 17:58:47
  */
 import React from 'react'
-import { Consumer } from './contextType'
+import { Consumer } from './ContextType'
 
 const ConsumerRegister = (Component, ItemNode) => {
   return (props) => {

@@ -4,16 +4,18 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-24 10:24:26
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-29 17:34:01
+ * @LastEditTime: 2020-09-29 17:58:02
  */
 import React from 'react'
 import {
   FlowContainer,
   NodeList,
-  DropBox
+  DropBox,
+  DropBoxFn,
+  DragGroup, 
+  DragItem
 } from './DragFlow'
-import { DropBoxFn } from './DragFlow/drop'
-import { DragGroup, DragItem } from './DragFlow/drag'
+
 import DropItem from './dropItem'
 import ComponentItem from './dragItem'
 import './app.css'
