@@ -4,7 +4,7 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-02 10:11:15
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-29 17:59:03
+ * @LastEditTime: 2020-09-30 09:54:37
  */
 import React from 'react'
 import { Provider } from './ContextType'
@@ -16,6 +16,7 @@ import { jsPlumb } from 'jsplumb'
 
 class NodeList extends React.Component{
   static displayName = 'NodeList'
+  
   render () {
     const {
       backgroundstyle,
@@ -61,8 +62,11 @@ class FlowContainerClass extends React.Component {
     nodeList: []
   }
 
+  // 移动结束
   moveEnd = true
-
+  
+  // 断开连接为执行的连接数组
+  connectionDetachedUnexecutedList = []
 
   componentDidMount() {
     this.JsPlumbInitHandle()
@@ -159,10 +163,16 @@ class FlowContainerClass extends React.Component {
     
     // 监听链接断开事件
     this.JsPlumbInstance.bind('connectionDetached', (conn) => {
+      // 将监听到的连接加入待办列表（这么做是为了解决同时发生n个连接断开的情况）
+      this.connectionDetachedUnexecutedList.push(conn)
 
       const { connectionList } = this.state
-      const connectionId = conn.connection.id
-      const afterDeleteConnectionList = connectionList.filter((item) => item.connectionId !== connectionId)
+
+      const afterDeleteConnectionList = connectionList.filter((item) => {
+        const needUnmount = this.connectionDetachedUnexecutedList.some((it) => it.connection.id === item.connectionId)
+        return !needUnmount
+      })
+
       this.setState({
         connectionList: afterDeleteConnectionList
       }, () => {
@@ -170,6 +180,7 @@ class FlowContainerClass extends React.Component {
         // 存储关联
         this.saveStateConnectionList()
       })
+
     })
     
     // 监听移动事件

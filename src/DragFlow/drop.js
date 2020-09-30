@@ -4,7 +4,7 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-01 16:51:42
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-29 17:57:27
+ * @LastEditTime: 2020-09-30 10:04:07
  */
 import React from 'react'
 import { DropTarget } from 'react-dnd'
@@ -97,9 +97,6 @@ class DefaultDropContainer extends React.Component{
 		return null
   }
   
-  componentDidMount() {
-
-  }
   
   componentDidUpdate(prevProps, PrevState) {
     const { boxList } = this.state
@@ -108,7 +105,7 @@ class DefaultDropContainer extends React.Component{
 			const newNode = boxList.filter((item) => {
         return PrevState.boxList.length === 0 || !PrevState.boxList.some((ite) => ite.dropId === item.dropId)
       })
-      console.log('newNode===', newNode)
+      // console.log('newNode===', newNode)
 
 			if (newNode && newNode.length > 0) {
         newNode.forEach((item) => {
@@ -161,7 +158,7 @@ class DefaultDropContainer extends React.Component{
 
   render() {
 
-    const { id, title, dropBoxClassName, connectDropTarget, DropItemNode } = this.props
+    const { id, title, showTitle, dropBoxClassName, connectDropTarget, DropItemNode } = this.props
 
     const { boxList } = this.state
     
@@ -169,7 +166,11 @@ class DefaultDropContainer extends React.Component{
 		return connectDropTarget && connectDropTarget(
 			<div className={dropBoxClassName ? dropBoxClassName : 'dropBox_container_new'} >
 				<div className='dropBox_new' id={id} >
-          <div className='dropBoxTitle'>{title}</div>
+          {
+            showTitle ? (
+              <div className='dropBoxTitle'>{title ?? '无区域名称'}</div>
+            ) : null
+          } 
           {
             boxList.map((item) => (
               dropItemDecorator(DropItemNode)({

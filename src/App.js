@@ -4,7 +4,7 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-24 10:24:26
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-29 17:58:02
+ * @LastEditTime: 2020-09-30 10:04:25
  */
 import React from 'react'
 import {
@@ -214,6 +214,7 @@ class FlowExample extends React.Component {
             id='dropBox-box'
             type='A' 
             title='我是A类型的接收区'
+            showTitle
             range={dropBoxBoxRange} 
           />
           <DropItemYzy 
@@ -223,6 +224,7 @@ class FlowExample extends React.Component {
             id='dropBox-yzy' 
             type='B' 
             title='我是B类型的接收区'
+            showTitle
             range={dropBoxYzyRange} 
           />
         </DropBox>
