@@ -4,7 +4,7 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-24 10:24:26
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-30 10:04:25
+ * @LastEditTime: 2020-09-30 10:06:00
  */
 import React from 'react'
 import {
@@ -35,14 +35,14 @@ class FlowExample extends React.Component {
     dropBoxBoxRange: {},
     dropBoxYzyRange: {},
     DragList_A: [
-      { type: 'A', id: 'box-type-fn1', title: '我是A功能组件1', status: 'normal' },
-      { type: 'A', id: 'box-type-fn2', title: '我是A功能组件2', status: 'normal' },
-      { type: 'A', id: 'box-type-fn3', title: '我是A功能组件3', status: 'normal' }
+      { type: 'A', id: 'box-type-fn1', title: 'A功能组件1', status: 'normal' },
+      { type: 'A', id: 'box-type-fn2', title: 'A功能组件2', status: 'normal' },
+      { type: 'A', id: 'box-type-fn3', title: 'A功能组件3', status: 'normal' }
     ],
     DragList_B: [
-      {type: 'B', id: 'yzy-type-fn1', title: '我是B功能组件1'},
-      {type: 'B', id: 'yzy-type-fn2', title: '我是B功能组件2'},
-      {type: 'B', id: 'yzy-type-fn3', title: '我是B功能组件3'}
+      {type: 'B', id: 'yzy-type-fn1', title: 'B功能组件1'},
+      {type: 'B', id: 'yzy-type-fn2', title: 'B功能组件2'},
+      {type: 'B', id: 'yzy-type-fn3', title: 'B功能组件3'}
     ],
   }
 
