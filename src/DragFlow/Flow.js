@@ -4,7 +4,7 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-02 10:11:15
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-30 09:54:37
+ * @LastEditTime: 2020-09-30 10:51:43
  */
 import React from 'react'
 import { Provider } from './ContextType'
@@ -209,7 +209,7 @@ class FlowContainerClass extends React.Component {
         nodeList: localNodeList
       }, () => {
         if (flowConnectionLsit.length > 0) {
-          console.log(this.props)
+
           const { config } = this.props
           const CustomInfo = config.ConnectionOverlays.find((item) => item[0] === 'Custom')
           const CustomId = CustomInfo ? CustomInfo[1].id : ''

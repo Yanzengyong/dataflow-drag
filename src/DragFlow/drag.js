@@ -4,7 +4,7 @@
  * @Author: Yanzengyong
  * @Date: 2020-09-04 14:30:40
  * @LastEditors: Yanzengyong
- * @LastEditTime: 2020-09-29 17:32:41
+ * @LastEditTime: 2020-09-30 11:17:15
  */
 import React from 'react'
 import { ulid } from 'ulid'
@@ -64,10 +64,9 @@ const DragItemFn = (name) => {
 const DragItem = (props) => {
   const {
     dragItemNode: DragItemNode,
-    type,
-    info
+    type
   } = props
-  const ConsumerDragItem = ConsumerRegister(DragItemFn(type, info)(
+  const ConsumerDragItem = ConsumerRegister(DragItemFn(type)(
     class extends React.Component {
       render() {
         const { connectDragSource } = this.props
